@@ -1,0 +1,22 @@
+<package>
+  <name> dumbo_safety_monitor </name>
+  <version>0.1.0</version>
+  <description>
+    Monitors Dumbo's force-torque sensors and stops the manipulators if the force or torque readings become too large.
+  </description>
+  <maintainer email="fevb@kth.se">Francisco Vina</maintainer>
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/dumbo_safety_monitor</url>
+
+  <author email="fevb@kth.se">Francisco Vina</author>
+  <maintainer email="fevb@kth.se">Francisco Vina</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  
+  <run_depend>rospy</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>cob_srvs</run_depend>
+
+</package>

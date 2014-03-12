@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node name="dumbo_safety_monitor" pkg="dumbo_safety_monitor" type="dumbo_safety_monitor" cwd="node" respawn="false" output="screen" >
+    <rosparam command="load" file="$(find dumbo_safety_monitor)/config/dumbo_safety_monitor.yaml" />
+  </node>
+</launch>

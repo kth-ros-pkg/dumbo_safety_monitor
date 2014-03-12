@@ -54,8 +54,8 @@ class DumboSafetyMonitor():
         self._time_l = rospy.Time()
         self._time_r = rospy.Time()
 
-        self._stop_left_arm_srv = rospy.ServiceProxy('/left_arm_controller/stop', Trigger)
-        self._stop_right_arm_srv = rospy.ServiceProxy('/right_arm_controller/stop', Trigger)
+        self._stop_left_arm_srv = rospy.ServiceProxy('/left_arm_controller/stop_arm', Trigger)
+        self._stop_right_arm_srv = rospy.ServiceProxy('/right_arm_controller/stop_arm', Trigger)
 
         rospy.Subscriber('/left_arm_ft_sensor/ft_compensated', WrenchStamped, self._leftFTCallback)
         rospy.Subscriber('/right_arm_ft_sensor/ft_compensated', WrenchStamped, self._rightFTCallback)
@@ -74,7 +74,9 @@ class DumboSafetyMonitor():
                 rospy.logerr('Force measurement too high on left arm, stopping the arm...')
                 self._time_l = rospy.Time.now()
 
-            self._stop_left_arm_srv()
+            if not self._left_arm_stopped:
+                self._stop_left_arm_srv()
+                self._left_arm_stopped = True
 
         if linalg.norm(torque) > self._max_torque:
 
@@ -82,7 +84,9 @@ class DumboSafetyMonitor():
                 rospy.logerr('Torque measurement too high on left arm, stopping the arm...')
                 self._time_l = rospy.Time.now()
 
-            self._stop_left_arm_srv()
+            if not self._left_arm_stopped:
+                self._stop_left_arm_srv()
+                self._left_arm_stopped = True
 
 
     def _rightFTCallback(self, wrench):
@@ -98,7 +102,9 @@ class DumboSafetyMonitor():
                 rospy.logerr('Force measurement too high on right arm, stopping the arm...')
                 self._time_r = rospy.Time.now()
 
-            self._stop_right_arm_srv()
+            if not self._right_arm_stopped:
+                self._stop_right_arm_srv()
+                self._right_arm_stopped = True
 
         if linalg.norm(torque) > self._max_torque:
 
@@ -106,7 +112,10 @@ class DumboSafetyMonitor():
                 rospy.logerr('Torque measurement too high on right arm, stopping the arm...')
                 self._time_r = rospy.Time.now()
 
-            self._stop_right_arm_srv()
+            if not self._right_arm_stopped:
+                self._stop_right_arm_srv()
+                self._right_arm_stopped = True
+
 
 
 if __name__ == '__main__':

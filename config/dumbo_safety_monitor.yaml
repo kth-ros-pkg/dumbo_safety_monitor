@@ -1,5 +1,0 @@
-# max force in [N]
-max_force: 50.0
-
-# max torque in [Nm]
-max_torque: 10.0 

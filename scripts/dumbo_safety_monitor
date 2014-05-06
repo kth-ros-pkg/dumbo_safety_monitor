@@ -34,6 +34,7 @@
 import array
 from geometry_msgs.msg._WrenchStamped import WrenchStamped
 from cob_srvs.srv._Trigger import Trigger
+from std_srvs.srv import *
 
 import rospy
 from numpy import *
@@ -53,6 +54,8 @@ class DumboSafetyMonitor():
 
         self._stop_left_arm_srv = rospy.ServiceProxy('/left_arm_controller/stop_arm', Trigger)
         self._stop_right_arm_srv = rospy.ServiceProxy('/right_arm_controller/stop_arm', Trigger)
+
+        self._sleep_srv = rospy.Service('~sleep', Empty, self._sleep)
 
         rospy.Subscriber('/left_arm_ft_sensor/ft_compensated', WrenchStamped, self._leftFTCallback)
         rospy.Subscriber('/right_arm_ft_sensor/ft_compensated', WrenchStamped, self._rightFTCallback)
@@ -101,6 +104,12 @@ class DumboSafetyMonitor():
                 self._time_r = rospy.Time.now()
                 self._stop_right_arm_srv()
 
+    def _sleep(self, req):
+        """
+        Pauses the checking of F/T limits for 3 seconds
+        """
+        rospy.sleep(3.0)
+        return EmptyResponse()
 
 
 if __name__ == '__main__':

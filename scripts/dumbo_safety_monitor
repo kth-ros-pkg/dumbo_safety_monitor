@@ -57,8 +57,8 @@ class DumboSafetyMonitor():
 
         self._sleep_srv = rospy.Service('~sleep', Empty, self._sleep)
 
-        rospy.Subscriber('/left_arm_ft_sensor/ft_compensated', WrenchStamped, self._leftFTCallback)
-        rospy.Subscriber('/right_arm_ft_sensor/ft_compensated', WrenchStamped, self._rightFTCallback)
+        rospy.Subscriber('/left_arm_ft_sensor/ft_gravity_compensated', WrenchStamped, self._leftFTCallback)
+        rospy.Subscriber('/right_arm_ft_sensor/ft_gravity_compensated', WrenchStamped, self._rightFTCallback)
 
 
     def _leftFTCallback(self, wrench):

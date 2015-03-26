@@ -33,7 +33,6 @@
 #    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import array
 from geometry_msgs.msg._WrenchStamped import WrenchStamped
-from cob_srvs.srv._Trigger import Trigger
 from std_srvs.srv import *
 
 import rospy
@@ -52,13 +51,12 @@ class DumboSafetyMonitor():
         self._time_l = rospy.Time.now()
         self._time_r = rospy.Time.now()
 
-        self._stop_left_arm_srv = rospy.ServiceProxy('/left_arm_controller/stop_arm', Trigger)
-        self._stop_right_arm_srv = rospy.ServiceProxy('/right_arm_controller/stop_arm', Trigger)
+        self._stop_srv = rospy.ServiceProxy('/dumbo/stop', Empty)
 
         self._sleep_srv = rospy.Service('~sleep', Empty, self._sleep)
 
-        rospy.Subscriber('/left_arm_ft_sensor/ft_gravity_compensated', WrenchStamped, self._leftFTCallback)
-        rospy.Subscriber('/right_arm_ft_sensor/ft_gravity_compensated', WrenchStamped, self._rightFTCallback)
+        rospy.Subscriber('/left_arm_ft_sensor/gravity_compensation/ft_compensated', WrenchStamped, self._leftFTCallback)
+        rospy.Subscriber('/right_arm_ft_sensor/gravity_compensation/ft_compensated', WrenchStamped, self._rightFTCallback)
 
 
     def _leftFTCallback(self, wrench):
@@ -73,14 +71,14 @@ class DumboSafetyMonitor():
             if ((rospy.Time.now()-self._time_l).to_sec() > 1.0):
                 rospy.logerr('Force measurement too high on left arm, stopping the arm...')
                 self._time_l = rospy.Time.now()
-                self._stop_left_arm_srv()
+                self._stop_srv()
 
         if linalg.norm(torque) > self._max_torque:
 
             if ((rospy.Time.now()-self._time_l).to_sec() > 1.0):
                 rospy.logerr('Torque measurement too high on left arm, stopping the arm...')
                 self._time_l = rospy.Time.now()
-                self._stop_left_arm_srv()
+                self._stop_srv()
 
 
     def _rightFTCallback(self, wrench):
@@ -95,14 +93,14 @@ class DumboSafetyMonitor():
             if ((rospy.Time.now()-self._time_r).to_sec() > 1.0):
                 rospy.logerr('Force measurement too high on right arm, stopping the arm...')
                 self._time_r = rospy.Time.now()
-                self._stop_right_arm_srv()
+                self._stop_srv()
 
         if linalg.norm(torque) > self._max_torque:
 
             if ((rospy.Time.now()-self._time_r).to_sec() > 1.0):
                 rospy.logerr('Torque measurement too high on right arm, stopping the arm...')
                 self._time_r = rospy.Time.now()
-                self._stop_right_arm_srv()
+                self._stop_srv()
 
     def _sleep(self, req):
         """
